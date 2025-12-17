@@ -28,6 +28,7 @@ export const MOCK_BLOGS = [
     updated_at: new Date('2024-12-10').toISOString(),
     published: true,
     cover_image: null,
+    image_url: 'https://images.unsplash.com/photo-1677442d019cecf8e4b58c6d0cb3b19382f78815?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
   },
   {
     id: '2',
@@ -44,6 +45,7 @@ export const MOCK_BLOGS = [
     updated_at: new Date('2024-12-08').toISOString(),
     published: true,
     cover_image: null,
+    image_url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
   },
 ];
 

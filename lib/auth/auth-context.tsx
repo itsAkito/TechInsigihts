@@ -50,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         avatar_url: null,
         bio: null,
         created_at: new Date().toISOString(),
+        role: 'admin', // Admin role
       };
       
       setUser(mockUser);
@@ -89,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         avatar_url: null,
         bio: null,
         created_at: new Date().toISOString(),
+        role: 'user', // Regular user role
       };
       
       setUser(mockUser);

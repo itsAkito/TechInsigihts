@@ -16,9 +16,11 @@ import {
 } from '@/ui/select';
 import { MOCK_CATEGORIES, MOCK_BLOGS } from '@/lib/api/mock-data';
 import { Switch } from '@/ui/switch';
+import { Upload } from 'lucide-react';
 
 export default function AddBlogPage() {
   const router = useRouter();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
@@ -26,6 +28,7 @@ export default function AddBlogPage() {
     content: '',
     category_id: '',
     published: false,
+    image_url: '',
   });
 
   const handleInputChange = (
@@ -48,6 +51,19 @@ export default function AddBlogPage() {
     setFormData((prev) => ({ ...prev, category_id: value }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string;
+        setImagePreview(imageUrl);
+        setFormData((prev) => ({ ...prev, image_url: imageUrl }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handlePublishedChange = (checked: boolean) => {
     setFormData((prev) => ({ ...prev, published: checked }));
   };
@@ -61,6 +77,11 @@ export default function AddBlogPage() {
       return;
     }
 
+    if (!formData.image_url) {
+      toast.error('Please upload a featured image');
+      return;
+    }
+
     try {
       // In a real app, this would save to the backend/database
       const newBlog = {
@@ -69,6 +90,7 @@ export default function AddBlogPage() {
         slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
         excerpt: formData.excerpt,
         content: formData.content,
+        image_url: formData.image_url,
         category_id: formData.category_id,
         category_name: MOCK_CATEGORIES.find((c) => c.id === formData.category_id)?.name || '',
         author: 'Admin',
@@ -104,6 +126,37 @@ export default function AddBlogPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Featured Image */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-foreground">
+                Featured Image <span className="text-red-500">*</span>
+              </label>
+              <div className="border-2 border-dashed border-muted-foreground rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                <label htmlFor="image-upload" className="cursor-pointer">
+                  {imagePreview ? (
+                    <div className="space-y-4">
+                      <img src={imagePreview} alt="Preview" className="w-full h-64 object-cover rounded-lg" />
+                      <Button type="button" variant="secondary">
+                        Change Image
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Upload className="w-12 h-12 mx-auto text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">Click to upload featured image</p>
+                    </div>
+                  )}
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
             {/* Title */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-foreground">

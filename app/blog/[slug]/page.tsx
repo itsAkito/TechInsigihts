@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { MOCK_BLOGS } from '@/lib/api/mock-data';
+import { ADMIN_CREATED_BLOGS } from '@/lib/api/admin-data';
 import { CommentSection } from '@/comments/comment-section';
 import { Badge } from '@/ui/badge';
 import { Calendar, User, Eye } from 'lucide-react';
@@ -9,14 +9,14 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return MOCK_BLOGS.map((post) => ({
+  return ADMIN_CREATED_BLOGS.map((post) => ({
     slug: post.slug,
   }));
 }
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = MOCK_BLOGS.find((p) => p.slug === slug);
+  const post = ADMIN_CREATED_BLOGS.find((p) => p.slug === slug);
 
   if (!post || !post.published) {
     notFound();
@@ -27,11 +27,21 @@ export default async function BlogPostPage({ params }: Props) {
     month: 'long',
     day: 'numeric',
   });
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 space-y-8">
       <article>
         <div className="space-y-6">
+          {/* Featured Image */}
+          {post.image_url && (
+            <div className="relative w-full h-96 rounded-lg overflow-hidden bg-muted">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
           <div className="space-y-4">
             <Badge variant="secondary" className="text-sm">
               {post.category_name}
@@ -50,7 +60,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-4">
               <div className="flex items-center gap-2">
                 <User className="h-4 w-4" />
-                <span>{post.author}</span>
+                <span>{post.author_name}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4" />
@@ -83,7 +93,7 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
       </article>
 
-      <CommentSection postId={post.id} />
+      <CommentSection entityId={post.id} entityType="post" />
     </div>
   );
 }

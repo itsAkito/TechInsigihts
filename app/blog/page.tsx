@@ -2,11 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/lib/auth/auth-context';
-import { getPublishedPosts } from '@/lib/api/posts';
-import { Card, CardContent, CardFooter, CardHeader } from '@/ui/card';
+import { ADMIN_CREATED_BLOGS } from '@/lib/api/admin-data';
+import { Card, CardContent } from '@/ui/card';
 import { Badge } from '@/ui/badge';
-import { Button } from '@/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 
 type Post = {
@@ -14,27 +12,35 @@ type Post = {
   title: string;
   excerpt: string;
   slug: string;
-  cover_image: string | null;
-  category?: { name: string };
-  author?: { username: string };
+  image_url?: string;
+  category_name?: string;
+  author_name?: string;
   created_at: string;
+  views?: number;
+  published?: boolean;
 };
 
 export default function BlogPage() {
-  const { user, loading: authLoading } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      loadPosts();
-    }
-  }, [user]);
+    loadPosts();
+  }, []);
 
   const loadPosts = async () => {
     try {
-      const data = await getPublishedPosts();
-      setPosts(data as Post[]);
+      // Combine admin-created blogs with user-created blogs
+      const userBlogs = localStorage.getItem('techy_blogs');
+      const allBlogs = [...ADMIN_CREATED_BLOGS];
+      if (userBlogs) {
+        const parsed = JSON.parse(userBlogs);
+        allBlogs.push(...parsed);
+      }
+      
+      // Filter published blogs
+      const published = allBlogs.filter((b: any) => b.published !== false);
+      setPosts(published as Post[]);
     } catch (error) {
       console.error('Failed to load posts:', error);
     } finally {
@@ -42,32 +48,13 @@ export default function BlogPage() {
     }
   };
 
-  if (authLoading || loading) {
-    return <div className="flex justify-center items-center min-h-[400px]">Loading...</div>;
-  }
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold">Sign in to view blogs</h2>
-          <p className="text-muted-foreground">Please log in to access our blog content</p>
-          <div className="flex gap-4 justify-center pt-4">
-            <Link href="/auth/user-login">
-              <Button>User Login (OTP)</Button>
-            </Link>
-            <Link href="/auth/admin-login">
-              <Button variant="outline">Admin Login</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-96">Loading...</div>;
   }
 
   return (
     <div className="container mx-auto px-4 py-16">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="space-y-8">
           <div>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight">Blog Posts</h1>
@@ -75,38 +62,36 @@ export default function BlogPage() {
           </div>
 
           {posts.length === 0 ? (
-            <Card>
-              <CardContent className="pt-6 text-center">
-                <p className="text-muted-foreground mb-4">No blog posts yet. Check back soon!</p>
-                <Link href="/new">
-                  <Button>Create First Post</Button>
-                </Link>
-              </CardContent>
-            </Card>
+            <div className="text-center py-12">
+              <p className="text-muted-foreground mb-4 text-lg">No blog posts yet. Check back soon!</p>
+            </div>
           ) : (
-            <div className="grid gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {posts.map((post) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h2 className="text-2xl font-bold">{post.title}</h2>
-                          {post.category && (
-                            <Badge className="mt-2">{post.category.name}</Badge>
-                          )}
-                        </div>
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full overflow-hidden group">
+                    {post.image_url && (
+                      <div className="relative h-48 overflow-hidden bg-muted">
+                        <img
+                          src={post.image_url}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                    )}
+                    <CardContent className="p-6 space-y-4">
+                      {post.category_name && (
+                        <Badge variant="secondary" className="text-xs">
+                          {post.category_name}
+                        </Badge>
+                      )}
+                      <h2 className="text-xl font-bold line-clamp-2">{post.title}</h2>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground pt-2">
+                        <span>{post.author_name || 'Anonymous'}</span>
+                        <span>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</span>
+                      </div>
                     </CardContent>
-                    <CardFooter className="text-sm text-muted-foreground">
-                      {post.author && <span>{post.author.username}</span>}
-                      <span className="ml-auto">
-                        {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                      </span>
-                    </CardFooter>
                   </Card>
                 </Link>
               ))}

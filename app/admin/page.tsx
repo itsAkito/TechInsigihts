@@ -201,18 +201,6 @@ export default function AdminDashboard() {
     </div>
   );
 }
-//           </div>
-//           <Link href="/admin/blogs" className="text-sm text-primary hover:underline">
-//             View All
-//           </Link>
-//         </CardHeader>
-//         <CardContent>
-//           <div className="space-y-4">
-//             {MOCK_BLOGS.map((blog) => (
-//               <div key={blog.id} className="flex items-start justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-//                 <div className="flex-1">
-//                   <h3 className="font-semibold text-foreground">{blog.title}</h3>
-//                   <p className="text-sm text-muted-foreground mt-1">{blog.excerpt}</p>
 //                   <div className="flex gap-4 mt-2 text-xs text-muted-foreground">
 //                     <span>{new Date(blog.created_at).toLocaleDateString()}</span>
 //                     <span className={blog.published ? 'text-green-600' : 'text-yellow-600'}>

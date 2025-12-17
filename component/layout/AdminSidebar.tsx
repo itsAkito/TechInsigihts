@@ -10,15 +10,11 @@ import {
   PenSquare,
   List,
   MessageSquare, 
-  BarChart3, 
   LogOut,
   Menu,
   X,
   Trophy,
   BarChart3 as Poll,
-  Users,
-  Mic,
-  Lightbulb,
 } from 'lucide-react';
 
 const adminLinks = [
@@ -33,26 +29,16 @@ const adminLinks = [
   
   // Community
   { section: 'Community', href: '/admin/polls', label: 'Polls', icon: Poll },
-  { href: '/admin/forum', label: 'Forum', icon: Users },
-  
-  // Experts
-  { section: 'Experts', href: '/admin/amas', label: 'AMAs', icon: Mic },
-  
-  // Content
-  { section: 'Content', href: '/admin/insights', label: 'Insights', icon: Lightbulb },
-  
-  // Analytics
-  { section: 'Analytics', href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 
 export function AdminSidebar() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   // Only show for admin users
-  if (!user) {
+  if (!user || !profile || profile.role !== 'admin') {
     return null;
   }
 
@@ -77,11 +63,11 @@ export function AdminSidebar() {
         {isOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
 
-      {/* Sidebar */}
+      {/* Sidebar - Always visible on desktop, toggleable on mobile */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-64 bg-card border-r border-border transform transition-transform duration-300 z-40 md:translate-x-0 overflow-y-auto ${
+        className={`fixed left-0 top-0 h-screen w-64 bg-card border-r border-border z-40 overflow-y-auto transition-transform duration-300 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } md:translate-x-0 md:static`}
       >
         <div className="p-6 space-y-8">
           <div>

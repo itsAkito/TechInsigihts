@@ -30,6 +30,9 @@ export default function Home() {
         <BlogList />
       </section>
 
+      {/* Newsletter Section - Prominent placement */}
+      <Newsletter />
+
       {/* Quizzes Section */}
       <QuizzesSection />
 
@@ -44,11 +47,6 @@ export default function Home() {
 
       {/* Insights Section */}
       <InsightsSection />
-
-      {/* Newsletter Section */}
-      <section className="container mx-auto px-4 py-16">
-        <Newsletter />
-      </section>
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">

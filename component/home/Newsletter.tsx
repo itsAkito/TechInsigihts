@@ -21,8 +21,18 @@ export default function Newsletter() {
 
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Store email in localStorage
+      const subscribers = JSON.parse(localStorage.getItem('newsletter_subscribers') || '[]');
+      
+      if (subscribers.includes(email)) {
+        toast.info('You are already subscribed!');
+        setLoading(false);
+        return;
+      }
+
+      subscribers.push(email);
+      localStorage.setItem('newsletter_subscribers', JSON.stringify(subscribers));
+
       toast.success('Subscribed successfully! Check your email for confirmation.');
       setEmail('');
     } catch (error) {

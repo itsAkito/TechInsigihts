@@ -12,6 +12,7 @@ export type Profile = {
   avatar_url: string | null;
   bio: string | null;
   created_at: string;
+  role?: 'user' | 'admin'; // Add role field
 };
 
 export type Category = {
@@ -54,4 +55,67 @@ export type PostView = {
   post_id: string;
   viewed_at: string;
   user_id: string | null;
+};
+export type Poll = {
+  id: string;
+  post_id: string;
+  question: string;
+  created_by: string;
+  created_at: string;
+};
+
+export type PollOption = {
+  id: string;
+  poll_id: string;
+  option_text: string;
+};
+
+export type PollVote = {
+  id: string;
+  poll_id: string;
+  option_id: string;
+  user_id: string;
+  created_at: string;
+};
+
+export type PollComment = {
+  id: string;
+  poll_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  user?: Profile;
+};
+
+export type Quiz = {
+  id: string;
+  post_id: string;
+  title: string;
+  created_by: string;
+  created_at: string;
+};
+
+export type QuizQuestion = {
+  id: string;
+  quiz_id: string;
+  question_text: string;
+  options: string[]; // stored as JSONB in Supabase
+  correct_option: string;
+};
+
+export type QuizAttempt = {
+  id: string;
+  quiz_id: string;
+  user_id: string;
+  score: number;
+  attempted_at: string;
+};
+
+export type QuizComment = {
+  id: string;
+  quiz_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  user?: Profile;
 };

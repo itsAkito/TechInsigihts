@@ -9,6 +9,7 @@ interface BlogCardProps {
   title: string;
   slug: string;
   excerpt: string;
+  image_url?: string;
   category_name: string;
   author: string;
   views: number;
@@ -20,6 +21,7 @@ export default function BlogCard({
   title,
   slug,
   excerpt,
+  image_url,
   category_name,
   author,
   views,
@@ -33,7 +35,17 @@ export default function BlogCard({
 
   return (
     <Card className="hover:shadow-lg transition-shadow overflow-hidden group">
-      <CardContent className="p-6 space-y-4">
+      {/* Featured Image */}
+      {image_url && (
+        <div className="relative h-48 overflow-hidden bg-muted">
+          <img
+            src={image_url}
+            alt={title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      )}
+      <CardContent className={`${image_url ? 'p-6' : 'p-6'} space-y-4`}>
         {/* Badge and Title */}
         <div className="space-y-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">

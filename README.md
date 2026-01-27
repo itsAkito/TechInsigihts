@@ -247,7 +247,4 @@ Contributions are welcome! Areas for improvement:
 - RSS feed
 - Tag system
 
-## License
-
-MIT
 
